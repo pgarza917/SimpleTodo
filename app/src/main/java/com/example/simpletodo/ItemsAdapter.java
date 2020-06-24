@@ -20,14 +20,23 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder>
         void onItemLongClicked(int position);
     }
 
+    // Similar to interface above, this interface allows for communication. In this
+    // case, this interface will facilitate communication to notify the Main Activity
+    // which view has been clicked so that it may be edited
+    public interface OnClickListener {
+        void onItemClicked(int position);
+    }
+
     // Member variables needed for the class
     List<String> items;
     OnLongClickListener longClickListener;
+    OnClickListener clickListener;
 
     // We need the a list as it is the model for our data
-    public ItemsAdapter(List<String> items, OnLongClickListener longClickListener) {
+    public ItemsAdapter(List<String> items, OnLongClickListener longClickListener, OnClickListener clickListener) {
         this.items = items;
         this.longClickListener = longClickListener;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -72,6 +81,14 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder>
         // Updates the view inside of the view holder with the given data (item parameter)
         public void bind(String item) {
             tvItem.setText(item);
+            // Creates a click listener to handle clicks on views in view holder
+            tvItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickListener.onItemClicked(getAdapterPosition());
+                }
+            });
+            // Creates a long click listener to handle long clicks on views in view holder
             tvItem.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {

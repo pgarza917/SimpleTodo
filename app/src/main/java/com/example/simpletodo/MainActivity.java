@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ClipData;
+import android.content.Intent;
 import android.os.Bundle;
 import org.apache.commons.io.FileUtils;
 import android.util.Log;
@@ -20,6 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    // Keys to identify what type of data we are working with when moving to other activities
+    public static final String KEY_ITEM_TEXT = "item_text";
+    public static final String KEY_ITEM_POSITION = "item_position";
+
+    // Keys to distinguish between different activities other than Main Activity
+    public static final int EDIT_TEXT_CODE = 20;
 
     List items;
 
@@ -37,9 +45,6 @@ public class MainActivity extends AppCompatActivity {
         btnAdd = findViewById(R.id.btnAdd);
         edItem = findViewById(R.id.etItem);
         rvItems = findViewById(R.id.rvItems);
-
-        // items will be a model for our data
-        items = new ArrayList<>();
 
         // Load saved items from stored data file into the list
         loadItems();
@@ -59,8 +64,23 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        // Implementation of click listener needed for communication with Items Adapter
+        // class
+        ItemsAdapter.OnClickListener onClickListener = new ItemsAdapter.OnClickListener() {
+            @Override
+            public void onItemClicked(int position) {
+                // Create the activity
+                Intent i = new Intent(MainActivity.this, EditActivity.class);
+                // Pass the data being edited
+                i.putExtra(KEY_ITEM_TEXT, (String) items.get(position));
+                i.putExtra(KEY_ITEM_POSITION, position);
+                // Display the activity
+                startActivityForResult(i, EDIT_TEXT_CODE);
+            }
+        };
+
         // Creating a new item adapter to handle display of list data in rows of view handler
-        itemsAdapter = new ItemsAdapter(items, onLongClickListener);
+        itemsAdapter = new ItemsAdapter(items, onLongClickListener, onClickListener);
 
         // Giving the recycler view (RV) the items adapter we just created
         rvItems.setAdapter(itemsAdapter);
