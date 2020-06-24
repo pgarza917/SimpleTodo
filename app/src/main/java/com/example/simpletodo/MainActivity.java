@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         // Creating a new item adapter to handle display of list data in rows of view handler
-        final ItemsAdapter itemsAdapter = new ItemsAdapter(items, onLongClickListener);
+        itemsAdapter = new ItemsAdapter(items, onLongClickListener);
 
         // Giving the recycler view (RV) the items adapter we just created
         rvItems.setAdapter(itemsAdapter);
