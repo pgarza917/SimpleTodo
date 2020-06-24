@@ -6,17 +6,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ClipData;
 import android.os.Bundle;
+import org.apache.commons.io.FileUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    List<String> items;
+    List items;
 
     Button btnAdd;
     EditText edItem;
@@ -36,10 +41,8 @@ public class MainActivity extends AppCompatActivity {
         // items will be a model for our data
         items = new ArrayList<>();
 
-        // Mocking data in items list to start
-        items.add("Buy juice");
-        items.add("Go for a run");
-        items.add("Have fun!");
+        // Load saved items from stored data file into the list
+        loadItems();
 
         // Implementation of long click listener needed for communication with Items Adapter
         // class
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 itemsAdapter.notifyItemRemoved(position);
                 // Create a Toast to notify user that item was deleted successfully
                 Toast.makeText(getApplicationContext(), "Item was removed", Toast.LENGTH_SHORT).show();
+                saveItems();
             }
         };
 
@@ -79,7 +83,34 @@ public class MainActivity extends AppCompatActivity {
                 edItem.setText("");
                 // Create a Toast to let user know that content was submitted successfully
                 Toast.makeText(getApplicationContext(), "Item was added", Toast.LENGTH_SHORT).show();
+                saveItems();
             }
         });
+    }
+
+    // Method will return the file in which we will store our list of to-do items
+    private File getDataFile() {
+        return new File(getFilesDir(), "data.txt");
+    }
+
+    // This function will load items by reading every line of the data file
+    private void loadItems() {
+        try{
+            items = new ArrayList<>(FileUtils.readLines(getDataFile(), Charset.defaultCharset()));
+        }
+        catch(IOException e){
+            Log.e("MainActivity", "Error reading items", e);
+            items = new ArrayList<>();
+        }
+    }
+
+    // This function saves items by writing them into the data file
+    private void saveItems() {
+        try{
+            FileUtils.writeLines(getDataFile(), items);
+        }
+        catch(IOException e) {
+            Log.e("MainActivity", "Error writing items", e);
+        }
     }
 }
