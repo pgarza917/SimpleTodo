@@ -34,6 +34,8 @@ GIF created with [Kap](https://getkap.co/).
 
 Describe any challenges encountered while building the app.
 
+* [ ] The main challenges I faced were encountered in setting up the necessary tools and environments, e.g. Git
+
 ## License
 
     Copyright 2020 FBU-CODEPATH
